@@ -8,6 +8,8 @@ use jxl::image::{Image, JxlOutputBuffer, Rect};
 use rand::{Rng, SeedableRng};
 use rand_xorshift::XorShiftRng;
 
+pub const FUZZ_SAMPLE_LIMIT: usize = 1 << 22;
+
 pub struct SimpleParallelRunner {
     max_threads: usize,
 }
@@ -86,7 +88,7 @@ impl Default for FuzzConfig {
             progressive: false,
             parallel: false,
             num_threads: 2,
-            sample_limit: Some(1 << 22),
+            sample_limit: Some(FUZZ_SAMPLE_LIMIT),
             flush_intermediate: false,
         }
     }
