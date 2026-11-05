@@ -5,9 +5,7 @@
 
 name: ClusterFuzzLite PR fuzzing
 on:
-  pull_request:
-    paths:
-      - '**'
+  workflow_dispatch:
 permissions:
   contents: read
   security-events: write
