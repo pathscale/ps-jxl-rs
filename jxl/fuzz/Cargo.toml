@@ -14,6 +14,7 @@ rand_xorshift = "0.4.0"
 
 [dependencies.jxl]
 path = ".."
+features = ["brotli"]
 
 # Prevent this from interfering with workspaces
 [workspace]
@@ -55,6 +56,12 @@ doc = false
 [[bin]]
 name = "decode_diff"
 path = "fuzz_targets/decode_diff.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "decode_aux"
+path = "fuzz_targets/decode_aux.rs"
 test = false
 doc = false
 
