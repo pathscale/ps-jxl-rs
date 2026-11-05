@@ -73,6 +73,9 @@ pub struct JxlAuxBox {
     brotli: bool,
 }
 
+#[cfg(feature = "brotli")]
+const MAX_AUX_BOX_DECODED_SIZE: usize = 16 * 1024 * 1024;
+
 impl std::fmt::Debug for JxlAuxBox {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let len = self.data.len();
@@ -102,6 +105,11 @@ impl JxlAuxBox {
         self.brotli
     }
 
+    /// Decodes and returns the auxiliary box data.
+    ///
+    /// When the `brotli` feature is enabled, compressed data is limited to 16 MiB
+    /// of decoded output. This is a payload limit, not a bound on total process
+    /// memory.
     #[cfg(feature = "brotli")]
     pub fn data(&self, mut trailing_data: &[u8]) -> Result<Cow<'_, [u8]>> {
         use std::io::prelude::*;
@@ -116,6 +124,12 @@ impl JxlAuxBox {
                 let n = brotli.read(&mut buf).map_err(crate::error::Error::Brotli)?;
                 if n == 0 {
                     break;
+                }
+                if output.len().saturating_add(n) > MAX_AUX_BOX_DECODED_SIZE {
+                    return Err(Error::Brotli(std::io::Error::new(
+                        std::io::ErrorKind::InvalidData,
+                        "auxiliary box exceeds decoded limit",
+                    )));
                 }
                 output.try_reserve(n)?;
                 output.extend_from_slice(&buf[..n]);
