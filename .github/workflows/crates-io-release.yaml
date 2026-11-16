@@ -8,10 +8,10 @@ jobs:
     permissions:
       id-token: write     # Required for OIDC token exchange
     steps:
-    - name: Require master
+    - name: Require main
       run: |
-        if [ "$GITHUB_REF" != "refs/heads/master" ]; then
-          echo "This workflow may only run from master." >&2
+        if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+          echo "This workflow may only run from main." >&2
           exit 1
         fi
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
